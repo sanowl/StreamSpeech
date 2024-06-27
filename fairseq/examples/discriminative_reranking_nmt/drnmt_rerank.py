@@ -12,13 +12,13 @@ import logging
 from multiprocessing import Pool
 import sys
 import os
-import random
 
 import numpy as np
 import sacrebleu
 import torch
 
 from fairseq import checkpoint_utils, options, utils
+import secrets
 
 
 logger = logging.getLogger("fairseq_cli.drnmt_rerank")
@@ -249,10 +249,9 @@ def main(args):
         random_params = np.array(
             [
                 [
-                    random.uniform(
-                        args.lower_bound_fw_weight, args.upper_bound_fw_weight
+                    secrets.SystemRandom().uniform(args.lower_bound_fw_weight, args.upper_bound_fw_weight
                     ),
-                    random.uniform(args.lower_bound_lenpen, args.upper_bound_lenpen),
+                    secrets.SystemRandom().uniform(args.lower_bound_lenpen, args.upper_bound_lenpen),
                 ]
                 for k in range(args.num_trials)
             ]

@@ -3,10 +3,10 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import random
 from typing import List
 
 from fairseq.data import BaseWrapperDataset, data_utils
+import secrets
 
 
 class RandomInputDataset(BaseWrapperDataset):
@@ -40,7 +40,7 @@ class RandomInputDataset(BaseWrapperDataset):
     def __getitem__(self, index):
         item = self.dataset[index]
         k, target_loc = self.get_target(item)
-        target_loc[k] = random.choice(self.random_input_dataset)
+        target_loc[k] = secrets.choice(self.random_input_dataset)
         return item
 
     def collater(self, samples):

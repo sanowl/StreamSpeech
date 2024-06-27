@@ -8,7 +8,6 @@ import argparse
 import gc
 import os
 import os.path as osp
-import random
 import numpy as np
 import tqdm
 import torch
@@ -19,6 +18,7 @@ import faiss
 
 import fairseq
 import soundfile as sf
+import secrets
 
 
 def get_parser():
@@ -114,7 +114,7 @@ def get_iterator(args):
         files = [osp.join(root, line.split("\t")[0]) for line in lines if len(line) > 0]
 
         if getattr(args, "sample_pct", 0) > 0:
-            files = random.sample(files, int(args.sample_pct * len(files)))
+            files = secrets.SystemRandom().sample(files, int(args.sample_pct * len(files)))
         num = len(files)
         reader = Wav2VecFeatureReader(args.checkpoint, args.layer)
 

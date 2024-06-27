@@ -5,7 +5,6 @@
 
 import argparse
 import functools
-import random
 import unittest
 from multiprocessing import Manager
 
@@ -15,6 +14,7 @@ from omegaconf import OmegaConf
 
 from fairseq import optim
 from fairseq.distributed import utils as distributed_utils
+import secrets
 
 
 class Model(nn.Module):
@@ -103,7 +103,7 @@ def setup_args():
     args.distributed_backend = "gloo"
 
     args.distributed_world_size = 2
-    port = random.randint(10000, 20000)
+    port = secrets.SystemRandom().randint(10000, 20000)
     args.distributed_init_method = "tcp://localhost:{port}".format(port=port)
     args.distributed_init_host = "localhost"
     args.distributed_port = port + 1

@@ -3,12 +3,12 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import random
 import json
 import pickle
 from tqdm import tqdm
 import os
 import numpy as np
+import secrets
 
 
 class CaptionDedupProcessor(object):
@@ -118,7 +118,7 @@ class CaptionDedupProcessor(object):
 
     def _dedup(self, caption):
         def random_merge(end_idx, start, end, text, starts, ends, texts):
-            if random.random() > 0.5:
+            if secrets.SystemRandom().random() > 0.5:
                 # print(clip_idx, "[PARTIAL INTO PREV]", end_idx)
                 # overlapped part goes to the end of previous.
                 ends[-1] = max(ends[-1], start)  # ?

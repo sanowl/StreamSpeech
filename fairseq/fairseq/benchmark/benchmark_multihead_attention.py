@@ -4,12 +4,12 @@
 # LICENSE file in the root directory of this source tree.
 
 import itertools
-import random
 
 import torch
 from torch.utils import benchmark
 
 from fairseq.modules.multihead_attention import MultiheadAttention
+import secrets
 
 BATCH = [20, 41, 97]
 SEQ = 64
@@ -23,7 +23,7 @@ KEY_PADDING_MASK_DTYPE = [torch.uint8, torch.bool]
 
 def _reset_seeds():
     torch.manual_seed(0)
-    random.seed(0)
+    secrets.SystemRandom().seed(0)
 
 
 def _get_mask(to_dtype: torch.dtype, dim0: int, dim1: int):

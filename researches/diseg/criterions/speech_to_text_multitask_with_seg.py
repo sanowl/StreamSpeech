@@ -4,7 +4,6 @@
 # LICENSE file in the root directory of this source tree.
 
 import math
-import random
 from dataclasses import dataclass, field
 
 import torch
@@ -16,6 +15,7 @@ from fairseq.criterions.label_smoothed_cross_entropy import (
 )
 from fairseq.dataclass import FairseqDataclass
 from omegaconf import II
+import secrets
 
 
 def seg2weight(seg_prob):
@@ -299,8 +299,7 @@ class SpeechToTextMultitaskwithSegCriterion(LabelSmoothedCrossEntropyCriterion):
 
         if update_num is not None and update_num > 10000:
             # multipath training
-            training_lagging_seg = random.randint(
-                3, max(10, sample["transcription_tokens_num"].min().item())
+            training_lagging_seg = secrets.SystemRandom().randint(3, max(10, sample["transcription_tokens_num"].min().item())
             )
         else:
             training_lagging_seg = None
