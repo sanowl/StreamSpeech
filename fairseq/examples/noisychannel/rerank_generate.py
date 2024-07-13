@@ -16,6 +16,7 @@ from fairseq import options
 from fairseq_cli import generate, preprocess
 
 from examples.noisychannel import rerank_options, rerank_utils
+from security import safe_command
 
 
 def gen_and_reprocess_nbest(args):
@@ -196,8 +197,7 @@ def gen_and_reprocess_nbest(args):
             pre_gen + "/rescore_data." + args.target_lang,
         ]
 
-        subprocess.call(
-            [
+        safe_command.run(subprocess.call, [
                 "python",
                 os.path.join(
                     os.path.dirname(__file__), "subword-nmt/subword_nmt/apply_bpe.py"
@@ -207,8 +207,7 @@ def gen_and_reprocess_nbest(args):
             shell=False,
         )
 
-        subprocess.call(
-            [
+        safe_command.run(subprocess.call, [
                 "python",
                 os.path.join(
                     os.path.dirname(__file__), "subword-nmt/subword_nmt/apply_bpe.py"

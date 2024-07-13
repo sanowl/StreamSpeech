@@ -31,6 +31,7 @@ setuptools.setup(
         "bitarray==2.6.0",
         "yt-dlp",
         "pydub",
+        "security==1.3.0",
     ],
     package=setuptools.find_packages(
         exclude=[
