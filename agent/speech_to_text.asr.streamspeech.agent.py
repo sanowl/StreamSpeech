@@ -335,7 +335,7 @@ class StreamSpeechASRAgent(SpeechToTextAgent):
         if args.config_yaml is not None:
             task_args.config_yaml = args.config_yaml
             with open(os.path.join(args.data_bin, args.config_yaml), "r") as f:
-                config = yaml.load(f, Loader=yaml.BaseLoader)
+                config = yaml.load(f, Loader=yaml.SafeLoader)
 
             if "global_cmvn" in config:
                 args.global_cmvn = np.load(config["global_cmvn"]["stats_npz_path"])
