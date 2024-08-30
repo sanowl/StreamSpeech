@@ -8,6 +8,7 @@ import logging
 from simuleval.data.segments import Segment, segment_from_json_string
 from simuleval.evaluator import SentenceLevelEvaluator
 import requests
+from security import safe_requests
 
 logger = logging.getLogger("simuleval.remote_evaluator")
 
@@ -26,7 +27,7 @@ class RemoteEvaluator:
 
     def receive_prediction(self) -> Segment:
         url = f"{self.base_url}/output"
-        r = requests.get(url)
+        r = safe_requests.get(url)
         return segment_from_json_string(r.text)
 
     def system_reset(self):
