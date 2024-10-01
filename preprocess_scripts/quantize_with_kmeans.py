@@ -7,7 +7,6 @@ import argparse
 import logging
 import os
 import tqdm
-import random
 import numpy as np
 
 import joblib
@@ -15,6 +14,7 @@ from utils import (
     get_audio_files,
 )
 from hubert_feature_reader import HubertFeatureReader
+import secrets
 
 
 def get_logger():
@@ -95,8 +95,7 @@ def get_feature_iterator(
             os.path.join(root, line.split("\t")[0]) for line in lines if len(line) > 0
         ]
         if sample_pct < 1.0:
-            file_path_list = random.sample(
-                file_path_list, int(sample_pct * len(file_path_list))
+            file_path_list = secrets.SystemRandom().sample(file_path_list, int(sample_pct * len(file_path_list))
             )
         num_files = len(file_path_list)
         reader = feature_reader_cls(checkpoint_path=checkpoint_path, layer=layer)

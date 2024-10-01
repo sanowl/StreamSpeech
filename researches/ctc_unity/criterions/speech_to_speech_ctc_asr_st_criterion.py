@@ -6,7 +6,6 @@
 import logging
 import math
 from collections import OrderedDict
-import random
 import torch
 from dataclasses import dataclass, field
 from fairseq import utils
@@ -29,6 +28,7 @@ from fairseq.criterions.speech_to_speech_criterion import (
     SpeechToSpectrogram2passMultitaskTaskCriterion,
 )
 from fairseq.data.data_utils import post_process
+import secrets
 
 logger = logging.getLogger(__name__)
 
@@ -140,8 +140,7 @@ class SpeechToUnit2passCTCASRSTMultitaskTaskCriterion(
             "n2": (
                 self.n2
                 if self.n2 >= 0
-                else random.randint(
-                    1, 1 + net_input_concat["prev_output_tokens_mt"].size(1)
+                else secrets.SystemRandom().randint(1, 1 + net_input_concat["prev_output_tokens_mt"].size(1)
                 )
             ),
         }
@@ -150,7 +149,7 @@ class SpeechToUnit2passCTCASRSTMultitaskTaskCriterion(
             if not model.training:
                 chunk_size = 99999
             else:
-                chunk_size = random.choice([8, 16, 24, 32, 99999])
+                chunk_size = secrets.choice([8, 16, 24, 32, 99999])
             chunk_size = int(chunk_size)
 
             model.encoder.chunk_size = chunk_size
@@ -158,7 +157,7 @@ class SpeechToUnit2passCTCASRSTMultitaskTaskCriterion(
             if not model.training and num_updates < 20000:
                 conv_chunk_size = 8
             else:
-                conv_chunk_size = random.choice([8, 16])
+                conv_chunk_size = secrets.choice([8, 16])
 
             chunk_size = min(chunk_size, conv_chunk_size)
 

@@ -12,13 +12,13 @@ See `"Mixture Models for Diverse Machine Translation: Tricks of the Trade"
 """
 
 import argparse
-import random
 import sys
 from itertools import chain
 
 import numpy as np
 import sacrebleu
 from sacrebleu import corpus_bleu as _corpus_bleu
+import secrets
 
 def main():
     parser = argparse.ArgumentParser(sys.argv[0])
@@ -154,7 +154,7 @@ def multi_ref(refs, hypos):
             _ref.append(rs[j])
             _hypo.append(h)
             best = [k for k in range(len(rs)) if s[k] == s[j]]
-            a.add(random.choice(best))
+            a.add(secrets.choice(best))
         ref_cnt += len(a)
     print("#refs covered: %.2f" % (ref_cnt / len(refs)))
 

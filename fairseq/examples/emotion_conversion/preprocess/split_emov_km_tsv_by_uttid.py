@@ -2,11 +2,11 @@ from pathlib import Path
 import os
 import sys
 import argparse
-import random
 import numpy as np
 from tqdm import tqdm
 from sklearn.model_selection import train_test_split
 from build_translation_manifests import get_utt_id
+import secrets
 
 
 def train_val_test_split(tsv_lines, km_lines, valid_percent, test_percent, seed=42):
@@ -45,7 +45,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     np.random.seed(args.seed)
-    random.seed(args.seed)
+    secrets.SystemRandom().seed(args.seed)
 
     os.makedirs(args.destdir, exist_ok=True)
     km = open(args.km, "r").readlines()

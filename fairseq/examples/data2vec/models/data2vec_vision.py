@@ -9,7 +9,6 @@
 import logging
 import math
 import numpy as np
-import random
 
 from dataclasses import dataclass, field
 from typing import Optional
@@ -24,6 +23,7 @@ import torch.distributed as dist
 from fairseq.modules import EMAModule, EMAModuleConfig
 from fairseq.dataclass import FairseqDataclass
 from fairseq.models import BaseFairseqModel, register_model
+import secrets
 
 
 logger = logging.getLogger(__name__)
@@ -205,13 +205,13 @@ class Data2VecVisionModel(BaseFairseqModel):
             def _mask(mask, max_mask_patches):
                 delta = 0
                 for attempt in range(10):
-                    target_area = random.uniform(min_masks, max_mask_patches)
-                    aspect_ratio = math.exp(random.uniform(*log_aspect_ratio))
+                    target_area = secrets.SystemRandom().uniform(min_masks, max_mask_patches)
+                    aspect_ratio = math.exp(secrets.SystemRandom().uniform(*log_aspect_ratio))
                     h = int(round(math.sqrt(target_area * aspect_ratio)))
                     w = int(round(math.sqrt(target_area / aspect_ratio)))
                     if w < width and h < height:
-                        top = random.randint(0, height - h)
-                        left = random.randint(0, width - w)
+                        top = secrets.SystemRandom().randint(0, height - h)
+                        left = secrets.SystemRandom().randint(0, width - w)
 
                         num_masked = mask[top : top + h, left : left + w].sum()
                         # Overlap

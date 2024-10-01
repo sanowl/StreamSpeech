@@ -10,9 +10,9 @@ Data pre-processing: build vocabularies and binarize training data.
 import argparse
 import glob
 import os
-import random
 
 import soundfile
+import secrets
 
 
 def get_parser():
@@ -52,7 +52,7 @@ def main(args):
 
     dir_path = os.path.realpath(args.root)
     search_path = os.path.join(dir_path, "**/*." + args.ext)
-    rand = random.Random(args.seed)
+    rand = secrets.SystemRandom().Random(args.seed)
 
     valid_f = (
         open(os.path.join(args.dest, "valid.tsv"), "w")

@@ -5,7 +5,6 @@
 import os
 import torch
 import pickle
-import random
 
 from tqdm import tqdm
 from torch.utils.data import DataLoader
@@ -23,6 +22,7 @@ from .task import Task
 from ..modules import vectorpool
 from ..evaluators.predictor import Predictor
 from ..utils import set_seed, get_local_rank, get_world_size
+import secrets
 
 
 class RetriTask(Task):
@@ -225,8 +225,7 @@ class VideoRetriPredictor(Predictor):
         # obtain available video_ids.
         video_ids = list(retriver.videoid_to_vectoridx.keys())
 
-        dataloader = random.sample(
-            video_ids,
+        dataloader = secrets.SystemRandom().sample(video_ids,
             len(video_ids) // self.num_video_per_batch
         )
 
@@ -240,7 +239,7 @@ class VideoRetriPredictor(Predictor):
                 [batch], self.num_cands)[0]
             if len(video_ids) > self.num_video_per_batch:
                 # we moved the center to make cluster robust.
-                video_ids = random.sample(video_ids, self.num_video_per_batch)
+                video_ids = secrets.SystemRandom().sample(video_ids, self.num_video_per_batch)
             batched_videos.append(video_ids)
         return self.finalize(batched_videos, epoch)
 
