@@ -13,6 +13,7 @@ import sys
 import tempfile
 from multiprocessing import Pool
 import sentencepiece as spm
+from security import safe_command
 
 
 def preprocess(spm_model_path, train_path, valid_path, test_path, dest_dir, remove_empty=False, output_format='piece', workers=20):
@@ -56,7 +57,7 @@ def preprocess(spm_model_path, train_path, valid_path, test_path, dest_dir, remo
         for split, path in ('train', train_path), ('valid', valid_path), ('test', test_path):
             if path is not None:
                 command += [f'--{split}pref', f'{tmp}/{split}']
-        subprocess.run(command)
+        safe_command.run(subprocess.run, command)
         
         # Copy SentencePiece model
         shutil.copyfile(spm_model_path, f'{dest_dir}/sentencepiece.bpe.model')

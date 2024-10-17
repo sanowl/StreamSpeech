@@ -12,6 +12,7 @@ import subprocess
 from pathlib import Path
 
 from examples.speech_to_text.data_utils import load_tsv_to_dicts
+from security import safe_command
 
 
 def preprocess_text(text):
@@ -55,7 +56,7 @@ def run_asr(asr_dir, split, w2v_ckpt, w2v_label, res_dir):
     cmd += ["--gen-subset", split, "--results-path", str(res_dir.resolve())]
 
     print(f"running cmd:\n{' '.join(cmd)}")
-    subprocess.run(cmd, check=True)
+    safe_command.run(subprocess.run, cmd, check=True)
 
 
 def compute_error_rate(hyp_wrd_path, ref_wrd_path, unit="word"):

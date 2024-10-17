@@ -8,6 +8,7 @@ from typing import Any, List, Sequence
 from hydra.core.singleton import Singleton
 from hydra.core.utils import JobReturn, filter_overrides
 from omegaconf import OmegaConf
+from security import safe_command
 
 log = logging.getLogger(__name__)
 
@@ -113,8 +114,7 @@ class DependencySubmititLauncher(BaseSubmititLauncher):
                 .replace('"', "")
             )
 
-            subprocess.call(
-                [next_script, job_id, task_id, dir],
+            safe_command.run(subprocess.call, [next_script, job_id, task_id, dir],
                 shell=False,
             )
 
