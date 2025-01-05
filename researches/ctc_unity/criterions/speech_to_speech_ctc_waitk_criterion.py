@@ -6,7 +6,6 @@
 import logging
 import math
 from collections import OrderedDict
-import random
 import torch
 from dataclasses import dataclass, field
 from fairseq import utils
@@ -29,6 +28,7 @@ from fairseq.criterions.speech_to_speech_criterion import (
     SpeechToSpectrogram2passMultitaskTaskCriterion,
 )
 from fairseq.data.data_utils import post_process
+import secrets
 
 logger = logging.getLogger(__name__)
 
@@ -140,8 +140,7 @@ class SpeechToUnit2passCTCWaitkMultitaskTaskCriterion(
             "k1": (
                 self.k1
                 if self.k1 >= 0
-                else random.randint(
-                    0,
+                else secrets.SystemRandom().randint(0,
                     1
                     + sample["net_input"]["src_tokens"].size(1)
                     * 40
@@ -151,22 +150,19 @@ class SpeechToUnit2passCTCWaitkMultitaskTaskCriterion(
             "n1": (
                 self.n1
                 if self.n1 >= 0
-                else random.randint(
-                    2, 1 + net_input_concat["prev_output_tokens_mt"].size(1)
+                else secrets.SystemRandom().randint(2, 1 + net_input_concat["prev_output_tokens_mt"].size(1)
                 )
             ),
             "k2": (
                 self.k2
                 if self.k2 >= 0
-                else random.randint(
-                    0, 1 + net_input_concat["prev_output_tokens_mt"].size(1)
+                else secrets.SystemRandom().randint(0, 1 + net_input_concat["prev_output_tokens_mt"].size(1)
                 )
             ),
             "n2": (
                 self.n2
                 if self.n1 >= 0
-                else random.randint(
-                    2, 1 + net_input_concat["prev_output_tokens_mt"].size(1)
+                else secrets.SystemRandom().randint(2, 1 + net_input_concat["prev_output_tokens_mt"].size(1)
                 )
             ),
             "segment_size": self.segment_size,

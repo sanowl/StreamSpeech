@@ -4,12 +4,12 @@
 # LICENSE file in the root directory of this source tree.
 
 import argparse
-import random
 
 import numpy as np
 from fairseq import options
 
 from examples.noisychannel import rerank, rerank_options
+import secrets
 
 
 def random_search(args):
@@ -31,12 +31,12 @@ def random_search(args):
 
     tune_parameters += tuneable_parameters
     param_values += initial_params
-    random.seed(args.seed)
+    secrets.SystemRandom().seed(args.seed)
 
     random_params = np.array(
         [
             [
-                random.uniform(args.lower_bound[i], args.upper_bound[i])
+                secrets.SystemRandom().uniform(args.lower_bound[i], args.upper_bound[i])
                 for i in range(len(args.tune_param))
             ]
             for k in range(args.num_trials)

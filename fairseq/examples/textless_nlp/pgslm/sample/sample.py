@@ -18,10 +18,10 @@ from torch.utils.data import DataLoader, DistributedSampler
 from fairseq.utils import move_to_cuda
 
 import tqdm
-import random
 import pathlib
 
 import sys, pathlib
+import secrets
 
 sys.path.append(str(pathlib.Path(__file__).parent.parent))
 from inference_dataset import InferenceDataset, explode_batch
@@ -299,7 +299,7 @@ def main(rank, world_size, args):
     raw_args = args
     args = convert_namespace_to_omegaconf(args)
     if args.common.seed is not None:
-        random.seed(args.common.seed)
+        secrets.SystemRandom().seed(args.common.seed)
         np.random.seed(args.common.seed)
         utils.set_torch_seed(args.common.seed)
 
@@ -587,11 +587,10 @@ def cli_main():
 
     world_size = torch.cuda.device_count()
     if world_size > 1:
-        import random
 
         mp.set_start_method("spawn", force=True)
         os.environ["MASTER_ADDR"] = "localhost"
-        os.environ["MASTER_PORT"] = str(random.randint(10_000, 50_000))
+        os.environ["MASTER_PORT"] = str(secrets.SystemRandom().randint(10_000, 50_000))
 
         print(f"Using {world_size} devices, master port {os.environ['MASTER_PORT']}")
 
