@@ -18,6 +18,7 @@ from typing import Optional
 
 from fairseq.data.dictionary import Dictionary
 from fairseq.dataclass import FairseqDataclass
+from security import safe_command
 
 script_dir = Path(__file__).resolve().parent
 config_path = script_dir / "config"
@@ -111,15 +112,13 @@ def create_lexicon(
         lex_disambig_path = (
             Path(cfg.kaldi_root) / "egs/wsj/s5/utils/add_lex_disambig.pl"
         )
-        res = subprocess.run(
-            [lex_disambig_path, lexicon_file, disambig_lexicon_file],
+        res = safe_command.run(subprocess.run, [lex_disambig_path, lexicon_file, disambig_lexicon_file],
             check=True,
             capture_output=True,
         )
         ndisambig = int(res.stdout)
         disamib_path = Path(cfg.kaldi_root) / "egs/wsj/s5/utils/add_disambig.pl"
-        res = subprocess.run(
-            [disamib_path, "--include-zero", in_units_file, str(ndisambig)],
+        res = safe_command.run(subprocess.run, [disamib_path, "--include-zero", in_units_file, str(ndisambig)],
             check=True,
             capture_output=True,
         )
@@ -138,8 +137,7 @@ def create_G(
     if not grammar_graph.exists() or not out_words_file.exists():
         logger.info(f"Creating {grammar_graph}")
         arpa2fst = kaldi_root / "src/lmbin/arpa2fst"
-        subprocess.run(
-            [
+        safe_command.run(subprocess.run, [
                 arpa2fst,
                 "--disambig-symbol=#0",
                 f"--write-symbol-table={out_words_file}",
@@ -187,12 +185,10 @@ def create_L(
 
         try:
             with open(lexicon_graph, "wb") as out_f:
-                res = subprocess.run(
-                    [make_lex, lexicon_file], capture_output=True, check=True
+                res = safe_command.run(subprocess.run, [make_lex, lexicon_file], capture_output=True, check=True
                 )
                 assert len(res.stderr) == 0, res.stderr.decode("utf-8")
-                res = subprocess.run(
-                    [
+                res = safe_command.run(subprocess.run, [
                         fstcompile,
                         f"--isymbols={in_units_file}",
                         f"--osymbols={out_words_file}",
@@ -203,14 +199,12 @@ def create_L(
                     capture_output=True,
                 )
                 assert len(res.stderr) == 0, res.stderr.decode("utf-8")
-                res = subprocess.run(
-                    [fstaddselfloops, in_disambig_sym, out_disambig_sym],
+                res = safe_command.run(subprocess.run, [fstaddselfloops, in_disambig_sym, out_disambig_sym],
                     input=res.stdout,
                     capture_output=True,
                     check=True,
                 )
-                res = subprocess.run(
-                    [fstarcsort, "--sort_type=olabel"],
+                res = safe_command.run(subprocess.run, [fstarcsort, "--sort_type=olabel"],
                     input=res.stdout,
                     capture_output=True,
                     check=True,
@@ -247,33 +241,28 @@ def create_LG(
 
         try:
             with open(lg_graph, "wb") as out_f:
-                res = subprocess.run(
-                    [fsttablecompose, lexicon_graph, grammar_graph],
+                res = safe_command.run(subprocess.run, [fsttablecompose, lexicon_graph, grammar_graph],
                     capture_output=True,
                     check=True,
                 )
-                res = subprocess.run(
-                    [
+                res = safe_command.run(subprocess.run, [
                         fstdeterminizestar,
                         "--use-log=true",
                     ],
                     input=res.stdout,
                     capture_output=True,
                 )
-                res = subprocess.run(
-                    [fstminimizeencoded],
+                res = safe_command.run(subprocess.run, [fstminimizeencoded],
                     input=res.stdout,
                     capture_output=True,
                     check=True,
                 )
-                res = subprocess.run(
-                    [fstpushspecial],
+                res = safe_command.run(subprocess.run, [fstpushspecial],
                     input=res.stdout,
                     capture_output=True,
                     check=True,
                 )
-                res = subprocess.run(
-                    [fstarcsort, "--sort_type=ilabel"],
+                res = safe_command.run(subprocess.run, [fstarcsort, "--sort_type=ilabel"],
                     input=res.stdout,
                     capture_output=True,
                     check=True,
@@ -391,8 +380,7 @@ def create_H(
 
         try:
             with open(h_graph, "wb") as out_f:
-                res = subprocess.run(
-                    [
+                res = safe_command.run(subprocess.run, [
                         fstcompile,
                         f"--isymbols={isym_file}",
                         f"--osymbols={h_out_units_file}",
@@ -403,8 +391,7 @@ def create_H(
                     capture_output=True,
                     check=True,
                 )
-                res = subprocess.run(
-                    [
+                res = safe_command.run(subprocess.run, [
                         fstaddselfloops,
                         disambig_in_units_file_int,
                         disambig_out_units_file_int,
@@ -413,8 +400,7 @@ def create_H(
                     capture_output=True,
                     check=True,
                 )
-                res = subprocess.run(
-                    [fstarcsort, "--sort_type=olabel"],
+                res = safe_command.run(subprocess.run, [fstarcsort, "--sort_type=olabel"],
                     input=res.stdout,
                     capture_output=True,
                     check=True,
@@ -448,8 +434,7 @@ def create_HLGa(
 
         try:
             with open(hlga_graph, "wb") as out_f:
-                res = subprocess.run(
-                    [
+                res = safe_command.run(subprocess.run, [
                         fsttablecompose,
                         h_graph,
                         lg_graph,
@@ -457,26 +442,22 @@ def create_HLGa(
                     capture_output=True,
                     check=True,
                 )
-                res = subprocess.run(
-                    [fstdeterminizestar, "--use-log=true"],
+                res = safe_command.run(subprocess.run, [fstdeterminizestar, "--use-log=true"],
                     input=res.stdout,
                     capture_output=True,
                     check=True,
                 )
-                res = subprocess.run(
-                    [fstrmsymbols, disambig_in_words_file_int],
+                res = safe_command.run(subprocess.run, [fstrmsymbols, disambig_in_words_file_int],
                     input=res.stdout,
                     capture_output=True,
                     check=True,
                 )
-                res = subprocess.run(
-                    [fstrmepslocal],
+                res = safe_command.run(subprocess.run, [fstrmepslocal],
                     input=res.stdout,
                     capture_output=True,
                     check=True,
                 )
-                res = subprocess.run(
-                    [fstminimizeencoded],
+                res = safe_command.run(subprocess.run, [fstminimizeencoded],
                     input=res.stdout,
                     capture_output=True,
                     check=True,
@@ -511,8 +492,7 @@ def create_HLa(
 
         try:
             with open(hla_graph, "wb") as out_f:
-                res = subprocess.run(
-                    [
+                res = safe_command.run(subprocess.run, [
                         fsttablecompose,
                         h_graph,
                         l_graph,
@@ -520,26 +500,22 @@ def create_HLa(
                     capture_output=True,
                     check=True,
                 )
-                res = subprocess.run(
-                    [fstdeterminizestar, "--use-log=true"],
+                res = safe_command.run(subprocess.run, [fstdeterminizestar, "--use-log=true"],
                     input=res.stdout,
                     capture_output=True,
                     check=True,
                 )
-                res = subprocess.run(
-                    [fstrmsymbols, disambig_in_words_file_int],
+                res = safe_command.run(subprocess.run, [fstrmsymbols, disambig_in_words_file_int],
                     input=res.stdout,
                     capture_output=True,
                     check=True,
                 )
-                res = subprocess.run(
-                    [fstrmepslocal],
+                res = safe_command.run(subprocess.run, [fstrmepslocal],
                     input=res.stdout,
                     capture_output=True,
                     check=True,
                 )
-                res = subprocess.run(
-                    [fstminimizeencoded],
+                res = safe_command.run(subprocess.run, [fstminimizeencoded],
                     input=res.stdout,
                     capture_output=True,
                     check=True,
@@ -592,8 +568,7 @@ def create_HLG(
             my_env = os.environ.copy()
             my_env["LD_LIBRARY_PATH"] = f"{kaldi_lib}:{my_env['LD_LIBRARY_PATH']}"
 
-            subprocess.run(
-                [
+            safe_command.run(subprocess.run, [
                     add_self_loop,
                     hlga_graph,
                     hlg_graph,

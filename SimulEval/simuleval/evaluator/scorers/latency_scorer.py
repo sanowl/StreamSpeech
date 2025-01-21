@@ -22,6 +22,7 @@ from simuleval.evaluator.instance import (
 )
 from argparse import ArgumentParser, Namespace
 from subprocess import Popen, PIPE
+from security import safe_command
 
 logger = logging.getLogger("simuleval.latency_scorer")
 
@@ -641,8 +642,7 @@ def speechoutput_alignment_latency_scorer(scorer_class):  # noqa C901
                 )
                 logger.info(mfa_command)
 
-                subprocess.run(
-                    mfa_command,
+                safe_command.run(subprocess.run, mfa_command,
                     shell=True,
                     check=True,
                 )

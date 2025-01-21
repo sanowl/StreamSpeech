@@ -12,6 +12,7 @@ import os
 import subprocess
 import sys
 import re
+from security import safe_command
 
 def parser():
     parser = argparse.ArgumentParser(description="ASR inference script for MMS model")
@@ -49,7 +50,7 @@ def process(args):
         PYTHONPATH=. PREFIX=INFER HYDRA_FULL_ERROR=1 python examples/speech_recognition/new/infer.py -m --config-dir examples/mms/asr/config/ --config-name infer_common decoding.type=viterbi dataset.max_tokens=1440000 distributed_training.distributed_world_size=1 "common_eval.path='{args.model}'" task.data={tmpdir} dataset.gen_subset="{args.lang}:dev" common_eval.post_process={args.format} decoding.results_path={tmpdir} {args.extra_infer_args}
         """
         print(">>> loading model & running inference ...", file=sys.stderr)
-        subprocess.run(cmd, shell=True, stdout=subprocess.DEVNULL,)
+        safe_command.run(subprocess.run, cmd, shell=True, stdout=subprocess.DEVNULL,)
         with open(tmpdir/"hypo.word") as fr:
             hypos = fr.readlines()
             outputs = reorder_decode(hypos)
