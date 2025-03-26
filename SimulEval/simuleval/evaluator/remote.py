@@ -22,15 +22,15 @@ class RemoteEvaluator:
 
     def send_source(self, segment: Segment):
         url = f"{self.base_url}/input"
-        requests.put(url, data=segment.json())
+        requests.put(url, data=segment.json(), timeout=60)
 
     def receive_prediction(self) -> Segment:
         url = f"{self.base_url}/output"
-        r = requests.get(url)
+        r = requests.get(url, timeout=60)
         return segment_from_json_string(r.text)
 
     def system_reset(self):
-        requests.post(f"{self.base_url}/reset")
+        requests.post(f"{self.base_url}/reset", timeout=60)
 
     def results(self):
         return self.evaluator.results()
