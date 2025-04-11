@@ -1,6 +1,5 @@
 import logging
 import argparse
-import random
 import sys
 import os
 import numpy as np
@@ -13,6 +12,7 @@ from pathlib import Path
 from tqdm import tqdm
 import amfm_decompy.basic_tools as basic
 import amfm_decompy.pYAAPT as pYAAPT
+import secrets
 
 dir_path = os.path.dirname(__file__)
 resynth_path = os.path.dirname(os.path.abspath(__file__)) + "/speech-resynthesis"
@@ -180,7 +180,7 @@ def synth(argv, interactive=False):
     a = parser.parse_args(argv)
 
     seed = 52
-    random.seed(seed)
+    secrets.SystemRandom().seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
 
@@ -240,7 +240,7 @@ def synth(argv, interactive=False):
 
     N = 0
     results = list(results.items())
-    random.shuffle(results)
+    secrets.SystemRandom().shuffle(results)
     for i, (sid, result) in tqdm(enumerate(results)):
         N += 1
         if N > a.N and a.N != -1:
@@ -262,11 +262,11 @@ def synth(argv, interactive=False):
         trg_audio = torch.FloatTensor(trg_audio).unsqueeze(0).cuda()
 
         src_spkr = parse_speaker(src_ref, h.multispkr)
-        src_spkr = src_spkr if src_spkr in EMOV_SPK2ID else random.choice(list(EMOV_SPK2ID.keys()))
+        src_spkr = src_spkr if src_spkr in EMOV_SPK2ID else secrets.choice(list(EMOV_SPK2ID.keys()))
         src_spkr = EMOV_SPK2ID[src_spkr]
         src_spkr = torch.LongTensor([src_spkr])
         trg_spkr = parse_speaker(trg_ref, h.multispkr)
-        trg_spkr = trg_spkr if trg_spkr in EMOV_SPK2ID else random.choice(list(EMOV_SPK2ID.keys()))
+        trg_spkr = trg_spkr if trg_spkr in EMOV_SPK2ID else secrets.choice(list(EMOV_SPK2ID.keys()))
         trg_spkr = EMOV_SPK2ID[trg_spkr]
         trg_spkr = torch.LongTensor([trg_spkr])
 

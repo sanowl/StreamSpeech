@@ -6,7 +6,6 @@
 import logging
 import math
 from collections import OrderedDict
-import random
 import torch
 from dataclasses import dataclass, field
 from fairseq import utils
@@ -27,6 +26,7 @@ from fairseq.criterions.speech_to_speech_criterion import (
     SpeechToUnit2passMultitaskTaskCriterion,
     SpeechToSpectrogram2passMultitaskTaskCriterion,
 )
+import secrets
 
 logger = logging.getLogger(__name__)
 
@@ -120,8 +120,7 @@ class SpeechToUnit2passWaitkMultitaskTaskCriterion(
             "k1": (
                 self.k1
                 if self.k1 > 0
-                else random.randint(
-                    5,
+                else secrets.SystemRandom().randint(5,
                     1
                     + sample["net_input"]["src_tokens"].size(1)
                     * 40

@@ -1,7 +1,6 @@
 from fairseq import tasks
 import numpy as np
 import logging
-import random
 from fairseq import options
 import torch
 import os
@@ -11,13 +10,14 @@ from fairseq.data.audio.audio_utils import (
     get_waveform,
     parse_path,
 )
+import secrets
 
 logging.basicConfig()
 logging.root.setLevel(logging.INFO)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-random.seed(1)
+secrets.SystemRandom().seed(1)
 np.random.seed(1)
 random_number_generator = np.random.RandomState(30)
 
@@ -33,7 +33,7 @@ def generate_random_data_sample(T, B=1, D=80):
 
 def generate_random_dataset(T_range_min, T_range_max, B=1, D=80, dataset_size=100):
     """Generate random dataset with T values within a given range, B, D"""
-    T_values = [random.randint(T_range_min, T_range_max) for i in range(dataset_size)]
+    T_values = [secrets.SystemRandom().randint(T_range_min, T_range_max) for i in range(dataset_size)]
     dataset = []
     for t in T_values:
         dataset.append(generate_random_data_sample(t, B, D))
@@ -157,7 +157,7 @@ def load_dataset_task(
 
 def randomly_sample_subset(dataset, size=500):
     """Randomly sample subset from a dataset"""
-    random_indices = [random.randint(0, len(dataset) - 1) for i in range(size)]
+    random_indices = [secrets.SystemRandom().randint(0, len(dataset) - 1) for i in range(size)]
     return [dataset[i] for i in random_indices]
 
 

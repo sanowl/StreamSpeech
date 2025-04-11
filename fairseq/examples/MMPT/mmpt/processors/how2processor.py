@@ -19,7 +19,6 @@
 import torch
 import math
 import pickle
-import random
 import os
 import numpy as np
 
@@ -34,6 +33,7 @@ from .processor import (
 )
 
 from ..utils import ShardedTensor
+import secrets
 
 
 class How2MetaProcessor(MetaProcessor):
@@ -189,8 +189,7 @@ class FixedLenAligner(Aligner):
         if self.subsampling is not None and self.subsampling >= 1:
             batch = []
             for _ in range(self.subsampling):
-                centerclip_idx = random.randint(
-                                    0, len(text_feature["start"]) - 1)
+                centerclip_idx = secrets.SystemRandom().randint(0, len(text_feature["start"]) - 1)
                 batch.append(
                     self.sampling(
                         video_idx,
@@ -273,7 +272,7 @@ class VariedLenAligner(FixedLenAligner):
         self.sampled_max_len = config.sampled_max_len
 
     def _get_text_maxlen(self):
-        return random.randint(self.sampled_min_len, self.sampled_max_len)
+        return secrets.SystemRandom().randint(self.sampled_min_len, self.sampled_max_len)
 
 
 class StartClipAligner(VariedLenAligner):
@@ -300,8 +299,7 @@ class OverlappedAligner(VariedLenAligner):
         self.video_clip_sampler = VideoClipSamplingProcessor()
 
     def _get_video_maxlen(self):
-        return random.randint(
-            self.sampled_video_min_len, self.sampled_video_max_len)
+        return secrets.SystemRandom().randint(self.sampled_video_min_len, self.sampled_video_max_len)
 
     def sampling(
         self,
@@ -322,7 +320,7 @@ class OverlappedAligner(VariedLenAligner):
         low = math.floor(text_feature["start"][text_clip_indexs[0]])
         high = math.ceil(text_feature["end"][text_clip_indexs[-1]])
         if low < high:
-            center = random.randint(low, high)
+            center = secrets.SystemRandom().randint(low, high)
         else:
             center = int((low + high) // 2)
         center = max(0, min(video_feature.shape[0] - 1, center))
@@ -387,10 +385,8 @@ class MFMMLMAligner(FixedLenAligner):
         if self.subsampling is not None and self.subsampling > 1:
             batch = []
             for _ in range(self.subsampling):
-                centerclip_idx = random.randint(
-                                    0, len(text_feature["start"]) - 1)
-                sampled_max_text_len = random.randint(
-                    self.sampled_min_len, self.sampled_max_len
+                centerclip_idx = secrets.SystemRandom().randint(0, len(text_feature["start"]) - 1)
+                sampled_max_text_len = secrets.SystemRandom().randint(self.sampled_min_len, self.sampled_max_len
                 )
                 batch.append(
                     self.sampling(
@@ -423,8 +419,8 @@ class MFMMLMAligner(FixedLenAligner):
             centerclip_idx, sampled_max_text_len)
 
         masking_text, masking_video = None, None
-        if random.random() < self.mm_prob:
-            if random.random() > 0.5:
+        if secrets.SystemRandom().random() < self.mm_prob:
+            if secrets.SystemRandom().random() > 0.5:
                 masking_text, masking_video = self.mm_type, "no"
             else:
                 masking_text, masking_video = "no", "full"
@@ -687,7 +683,7 @@ class TextClipSamplingProcessor(Processor):
         t_num_clips = len(text_feature["start"])
 
         if centerclip_idx is None:
-            centerclip_idx = random.randint(0, t_num_clips - 1)
+            centerclip_idx = secrets.SystemRandom().randint(0, t_num_clips - 1)
 
         start_idx, end_idx = centerclip_idx, centerclip_idx + 1
         text_clip_indexs = deque()
@@ -705,22 +701,22 @@ class TextClipSamplingProcessor(Processor):
             and text_len < max_text_len
             and video_len < max_video_len
         ):
-            if random.random() > 0.5 and end_idx < t_num_clips:
+            if secrets.SystemRandom().random() > 0.5 and end_idx < t_num_clips:
                 # skip the next one?
-                if random.random() > self.keep_prob and (end_idx + 1) < t_num_clips:
+                if secrets.SystemRandom().random() > self.keep_prob and (end_idx + 1) < t_num_clips:
                     end_idx = end_idx + 1
                 text_clip_indexs.append(end_idx)
                 text_len += len(text_feature["cap"][end_idx])
                 end_idx += 1
             elif start_idx > 0:
-                if random.random() > self.keep_prob and (start_idx - 1) > 0:
+                if secrets.SystemRandom().random() > self.keep_prob and (start_idx - 1) > 0:
                     start_idx = start_idx - 1
                 start_idx -= 1
                 text_clip_indexs.insert(0, start_idx)
                 text_len += len(text_feature["cap"][start_idx])
             else:
                 if end_idx < t_num_clips:
-                    if random.random() > self.keep_prob and (end_idx + 1) < t_num_clips:
+                    if secrets.SystemRandom().random() > self.keep_prob and (end_idx + 1) < t_num_clips:
                         end_idx = end_idx + 1
                     text_clip_indexs.append(end_idx)
                     text_len += len(text_feature["cap"][end_idx])
@@ -751,7 +747,7 @@ class VideoClipSamplingProcessor(Processor):
                 end += 1
             elif end >= video_len:
                 start -= 1
-            elif random.random() > 0.5:
+            elif secrets.SystemRandom().random() > 0.5:
                 end += 1
             else:
                 start -= 1
@@ -805,12 +801,12 @@ class How2MILNCEAligner(FixedLenAligner):
         }
 
     def _get_video(self, video_feature, start, end):
-        start_seek = random.randint(start, int(max(start, end - self.num_sec)))
+        start_seek = secrets.SystemRandom().randint(start, int(max(start, end - self.num_sec)))
         # duration = self.num_sec + 0.1
         return video_feature[start_seek : int(start_seek + self.num_sec)]
 
     def _get_text(self, cap):
-        ind = random.randint(0, len(cap["start"]) - 1)
+        ind = secrets.SystemRandom().randint(0, len(cap["start"]) - 1)
         if self.num_candidates == 1:
             words = [ind]
         else:

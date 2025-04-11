@@ -7,7 +7,6 @@ import contextlib
 import json
 import logging
 import os
-import random
 import sys
 import tempfile
 import unittest
@@ -29,6 +28,7 @@ from tests.utils import (
     train_language_model,
     train_translation_model,
 )
+import secrets
 
 try:
     import transformers  # noqa
@@ -1795,7 +1795,7 @@ def create_dummy_roberta_head_data(
                 offset = 0
                 for i in range(num_examples):
                     # write example input
-                    ex_len = random.randint(1, maxlen)
+                    ex_len = secrets.SystemRandom().randint(1, maxlen)
                     ex_str = " ".join(map(chr, input_data[offset : offset + ex_len]))
                     print(ex_str, file=f_in)
                     # write example label

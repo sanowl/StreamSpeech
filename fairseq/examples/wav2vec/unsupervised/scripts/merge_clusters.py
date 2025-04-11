@@ -10,10 +10,10 @@ import os.path as osp
 import numpy as np
 import tqdm
 import torch
-import random
 from shutil import copyfile
 
 from npy_append_array import NpyAppendArray
+import secrets
 
 
 def get_parser():
@@ -92,7 +92,7 @@ def main():
             if args.pooling == "mean":
                 new_x = feats[start:end].mean(dim=0)
             elif args.pooling == "sample":
-                new_x = feats[start + int(random.random() * c)]
+                new_x = feats[start + int(secrets.SystemRandom().random() * c)]
             else:
                 raise NotImplementedError()
             merged.append(new_x)

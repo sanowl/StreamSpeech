@@ -6,14 +6,13 @@
 make a general fairseq task for MM pretraining.
 """
 
-import random
-
 from fairseq.tasks import LegacyFairseqTask, register_task
 
 from .task import Task
 from .retritask import RetriTask
 from ..datasets import FairseqMMDataset
 from .. import utils
+import secrets
 
 
 @register_task("mmtask")
@@ -70,7 +69,7 @@ class FairseqMMTask(LegacyFairseqTask):
         grouped_shuffling=False,
         update_epoch_batch_itr=False,
     ):
-        random.seed(epoch)
+        secrets.SystemRandom().seed(epoch)
         if dataset.mmdataset.split == "train" and isinstance(self.mmtask, RetriTask):
             if epoch >= self.mmtask.config.retri_epoch:
                 if not hasattr(self.mmtask, "retri_dataloader"):

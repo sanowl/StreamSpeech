@@ -7,7 +7,6 @@ import argparse
 import json
 import logging
 from pathlib import Path
-import random
 import soundfile as sf
 import torch
 
@@ -15,6 +14,7 @@ from tqdm import tqdm
 
 from fairseq import utils
 from fairseq.models.text_to_speech.vocoder import CodeHiFiGANVocoder
+import secrets
 
 
 logging.basicConfig()
@@ -67,7 +67,7 @@ def main(args):
         suffix = ""
         if multispkr:
             spk = (
-                random.randint(0, num_speakers - 1)
+                secrets.SystemRandom().randint(0, num_speakers - 1)
                 if args.speaker_id == -1
                 else args.speaker_id
             )

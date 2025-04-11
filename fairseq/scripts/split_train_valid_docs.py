@@ -9,8 +9,8 @@ boundaries. Documents should be separated by a single empty line.
 """
 
 import argparse
-import random
 import sys
+import secrets
 
 
 def main():
@@ -35,7 +35,7 @@ def main():
             sample.append(doc.copy())
         else:
             i = num_docs[0]
-            j = random.randrange(i + 1)
+            j = secrets.SystemRandom().randrange(i + 1)
             if j < args.k:
                 remainder.append(sample[j])
                 sample[j] = doc.copy()
