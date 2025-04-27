@@ -11,6 +11,7 @@ from contextlib import redirect_stdout
 
 from fairseq import options
 from fairseq_cli import eval_lm, preprocess
+from security import safe_command
 
 
 def reprocess(fle):
@@ -774,8 +775,7 @@ def lm_scoring(
             "--output",
             rescore_bpe + target_lang,
         ]
-        subprocess.call(
-            [
+        safe_command.run(subprocess.call, [
                 "python",
                 os.path.join(
                     os.path.dirname(__file__), "subword-nmt/subword_nmt/apply_bpe.py"
