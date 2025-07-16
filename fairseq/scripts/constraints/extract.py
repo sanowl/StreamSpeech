@@ -8,8 +8,8 @@
 """Extracts random constraints from reference files."""
 
 import argparse
-import random
 import sys
+import secrets
 
 
 def get_phrase(words, index, length):
@@ -23,7 +23,7 @@ def get_phrase(words, index, length):
 def main(args):
 
     if args.seed:
-        random.seed(args.seed)
+        secrets.SystemRandom().seed(args.seed)
 
     for line in sys.stdin:
         constraints = []
@@ -48,10 +48,10 @@ def main(args):
                 for i in range(num):
                     if len(words) == 0:
                         break
-                    segmentno = random.choice(range(len(words)))
+                    segmentno = secrets.choice(range(len(words)))
                     segment = words.pop(segmentno)
                     tokens = segment.split()
-                    phrase_index = random.choice(range(len(tokens)))
+                    phrase_index = secrets.choice(range(len(tokens)))
                     choice = " ".join(
                         tokens[phrase_index : min(len(tokens), phrase_index + args.len)]
                     )

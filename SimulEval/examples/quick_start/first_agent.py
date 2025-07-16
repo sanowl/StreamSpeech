@@ -4,10 +4,10 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
-import random
 from simuleval.utils import entrypoint
 from simuleval.agents import TextToTextAgent
 from simuleval.agents.actions import ReadAction, WriteAction
+import secrets
 
 
 @entrypoint
@@ -19,7 +19,7 @@ class DummyWaitkTextAgent(TextToTextAgent):
         lagging = len(self.states.source) - len(self.states.target)
 
         if lagging >= self.waitk or self.states.source_finished:
-            prediction = random.choice(self.vocab)
+            prediction = secrets.choice(self.vocab)
 
             return WriteAction(prediction, finished=(lagging <= 1))
         else:

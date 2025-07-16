@@ -7,7 +7,6 @@
 from functools import partial
 import logging
 import math
-import random
 import time
 
 import numpy as np
@@ -22,6 +21,7 @@ from fairseq.data import FairseqDataset
 from fairseq.data.data_utils import compute_block_mask_1d, compute_block_mask_2d
 
 from shutil import copyfile
+import secrets
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +45,7 @@ def load(path, loader, cache):
         except Exception as e:
             logger.warning(str(e))
             if "Errno 13" in str(e):
-                caching_loader.cache_root = f"/scratch/{random.randint(0, 69420)}"
+                caching_loader.cache_root = f"/scratch/{secrets.SystemRandom().randint(0, 69420)}"
                 logger.warning(f"setting cache root to {caching_loader.cache_root}")
                 cached_path = caching_loader.cache_root + path
             if curr_try == (num_tries - 1):
@@ -149,16 +149,16 @@ class RandomResizedCropAndInterpolationWithTwoPic:
         area = img.size[0] * img.size[1]
 
         for attempt in range(10):
-            target_area = random.uniform(*scale) * area
+            target_area = secrets.SystemRandom().uniform(*scale) * area
             log_ratio = (math.log(ratio[0]), math.log(ratio[1]))
-            aspect_ratio = math.exp(random.uniform(*log_ratio))
+            aspect_ratio = math.exp(secrets.SystemRandom().uniform(*log_ratio))
 
             w = int(round(math.sqrt(target_area * aspect_ratio)))
             h = int(round(math.sqrt(target_area / aspect_ratio)))
 
             if w <= img.size[0] and h <= img.size[1]:
-                i = random.randint(0, img.size[1] - h)
-                j = random.randint(0, img.size[0] - w)
+                i = secrets.SystemRandom().randint(0, img.size[1] - h)
+                j = secrets.SystemRandom().randint(0, img.size[0] - w)
                 return i, j, h, w
 
         # Fallback to central crop
@@ -188,7 +188,7 @@ class RandomResizedCropAndInterpolationWithTwoPic:
         """
         i, j, h, w = self.get_params(img, self.scale, self.ratio)
         if isinstance(self.interpolation, (tuple, list)):
-            interpolation = random.choice(self.interpolation)
+            interpolation = secrets.choice(self.interpolation)
         else:
             interpolation = self.interpolation
         if self.second_size is None:

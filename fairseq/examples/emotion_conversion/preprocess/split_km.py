@@ -1,9 +1,9 @@
 from pathlib import Path
 import os
 import argparse
-import random
 import numpy as np
 from sklearn.utils import shuffle
+import secrets
 
 
 if __name__ == "__main__":
@@ -22,7 +22,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     np.random.seed(args.seed)
-    random.seed(args.seed)
+    secrets.SystemRandom().seed(args.seed)
 
     os.makedirs(args.destdir, exist_ok=True)
     km = open(args.km, "r").readlines()

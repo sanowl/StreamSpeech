@@ -4,12 +4,12 @@
 # LICENSE file in the root directory of this source tree.
 
 import logging
-import random
 from pathlib import Path
 from typing import Dict, Optional, Tuple
 
 import torch
 import torch.nn as nn
+import secrets
 
 logger = logging.getLogger(__name__)
 
@@ -106,7 +106,7 @@ class TTSHubInterface(nn.Module):
         spk = task.data_cfg.hub.get("speaker", speaker)
         n_speakers = len(task.speaker_to_id or {})
         if spk is None and n_speakers > 0:
-            spk = random.randint(0, n_speakers - 1)
+            spk = secrets.SystemRandom().randint(0, n_speakers - 1)
         if spk is not None:
             spk = max(0, min(spk, n_speakers - 1))
         if verbose:
@@ -170,7 +170,7 @@ class VocoderHubInterface(nn.Module):
             assert (
                 speaker < self.num_speakers
             ), f"invalid --speaker-id ({speaker}) with total #speakers = {self.num_speakers}"
-            spk = random.randint(0, self.num_speakers - 1) if speaker == -1 else speaker
+            spk = secrets.SystemRandom().randint(0, self.num_speakers - 1) if speaker == -1 else speaker
             x["spkr"] = torch.LongTensor([spk]).view(1, 1)
         return x
 

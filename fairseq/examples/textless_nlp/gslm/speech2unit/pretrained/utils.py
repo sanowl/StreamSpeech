@@ -5,7 +5,6 @@
 
 import gc
 import os
-import random
 import shutil
 import numpy as np
 
@@ -23,6 +22,7 @@ from examples.textless_nlp.gslm.speech2unit.pretrained.logmel_feature_reader imp
 from examples.textless_nlp.gslm.speech2unit.pretrained.w2v2_feature_reader import (
     Wav2VecFeatureReader,
 )
+import secrets
 
 
 def get_feature_reader(feature_type):
@@ -51,8 +51,7 @@ def get_feature_iterator(
             if len(line) > 0
         ]
         if sample_pct < 1.0:
-            file_path_list = random.sample(
-                file_path_list, int(sample_pct * len(file_path_list))
+            file_path_list = secrets.SystemRandom().sample(file_path_list, int(sample_pct * len(file_path_list))
             )
         num_files = len(file_path_list)
         reader = feature_reader_cls(

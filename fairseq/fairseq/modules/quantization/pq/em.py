@@ -5,10 +5,10 @@
 
 import logging
 import os
-import random
 from collections import Counter
 
 import torch
+import secrets
 
 
 class EM:
@@ -105,7 +105,7 @@ class EM:
         tentatives = 0
         while len(empty_clusters) > 0:
             # given an empty cluster, find most populated cluster and split it into two
-            k = random.choice(list(empty_clusters))
+            k = secrets.choice(list(empty_clusters))
             m = counts.most_common(1)[0][0]
             e = torch.randn_like(self.centroids[m]) * self.eps
             self.centroids[k] = self.centroids[m].clone()

@@ -6,12 +6,12 @@ from pathlib import Path
 import os
 from sklearn.utils import shuffle
 import numpy as np
-import random
 from shutil import copy
 from subprocess import check_call
+import secrets
 
 np.random.seed(42)
-random.seed(42)
+secrets.SystemRandom().seed(42)
 
 
 def get_fname(s):

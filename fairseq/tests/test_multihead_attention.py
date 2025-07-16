@@ -3,13 +3,13 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import random
 import unittest
 
 import pytest
 import torch
 
 from fairseq.modules.multihead_attention import MultiheadAttention, _mask_for_xformers
+import secrets
 
 BATCH = [20, 41, 97]
 SEQ = [64]
@@ -35,7 +35,7 @@ def assert_almost_equal(x, y, decimal=1, err_msg=""):
 def _reset_seeds():
     torch.manual_seed(0)
     torch.random.manual_seed(0)
-    random.seed(0)
+    secrets.SystemRandom().seed(0)
     torch.cuda.manual_seed_all(0)
 
 
@@ -181,7 +181,7 @@ def test_xformers_blocksparse_parity(
     )
 
     # # account for when nan != nan
-    rand = random.uniform(0, 1)
+    rand = secrets.SystemRandom().uniform(0, 1)
     xformers_output = xformers_output.masked_fill(xformers_output.isnan(), rand)
     xf_blocksparse_output = xf_blocksparse_output.masked_fill(
         xf_blocksparse_output.isnan(), rand
@@ -298,7 +298,7 @@ def test_xformers_single_forward_parity(
 
     # account for when nan != nan
     if xformers_output.isnan().any() or original_output.isnan().any():
-        rand = random.uniform(0, 1)
+        rand = secrets.SystemRandom().uniform(0, 1)
         xformers_output = xformers_output.masked_fill(xformers_output.isnan(), rand)
         original_output = original_output.masked_fill(original_output.isnan(), rand)
 

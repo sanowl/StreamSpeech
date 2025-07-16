@@ -21,6 +21,7 @@ import time
 from types import SimpleNamespace
 
 import sys, pathlib
+import secrets
 
 sys.path.append(str(pathlib.Path(__file__).parent.parent.resolve()))
 
@@ -707,11 +708,10 @@ def cli_main():
 
     world_size = args.n_workers or torch.cuda.device_count()
     if world_size > 1:
-        import random
 
         mp.set_start_method("spawn", force=True)
         os.environ["MASTER_ADDR"] = "localhost"
-        os.environ["MASTER_PORT"] = str(random.randint(10_000, 50_000))
+        os.environ["MASTER_PORT"] = str(secrets.SystemRandom().randint(10_000, 50_000))
 
         mp.spawn(
             main,

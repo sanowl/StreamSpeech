@@ -7,7 +7,6 @@
 import json
 import logging
 import os
-import random
 from pathlib import Path
 
 import numpy as np
@@ -16,6 +15,7 @@ import torch.utils.data
 
 from . import data_utils
 from fairseq.data.fairseq_dataset import FairseqDataset
+import secrets
 
 F0_FRAME_SPACE = 0.005  # sec
 
@@ -307,7 +307,7 @@ class CodeDataset(FairseqDataset):
         shifts="0,0",
         return_continuous_f0=False,
     ):
-        random.seed(1234)
+        secrets.SystemRandom().seed(1234)
         self.dictionary = dictionary
         self.dur_dictionary = dur_dictionary
         self.f0_dictionary = f0_dictionary

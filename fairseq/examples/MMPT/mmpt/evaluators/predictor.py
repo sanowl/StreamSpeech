@@ -3,7 +3,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 import os
-import random
 import json
 import numpy as np
 import torch
@@ -11,6 +10,7 @@ import pickle
 import math
 
 from tqdm import tqdm
+import secrets
 
 
 class Predictor(object):
@@ -96,7 +96,7 @@ class NLGPredictor(Predictor):
                 generated_text = "none"
             outputs["outputs"].append(generated_text)
             outputs["targets"][0].append(data["ref"][idx])
-            if random.random() < 0.001:
+            if secrets.SystemRandom().random() < 0.001:
                 print("_output", _output)
                 print("generated_text", generated_text)
                 print("ref", data["ref"][idx])

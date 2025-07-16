@@ -6,9 +6,9 @@ import pandas as pd
 import os
 import numpy as np
 import ffmpeg
-import random
 
 from torch.utils.data import Dataset
+import secrets
 
 
 class VideoLoader(Dataset):
@@ -226,7 +226,7 @@ class AvKeyframeVideoCompressor(VideoLoader):
                     frames = []
                     for frame in container.decode(video=0):
                         frames.append(frame)
-                    frames = random.sample(frames, self.max_num_frames)
+                    frames = secrets.SystemRandom().sample(frames, self.max_num_frames)
 
                     os.makedirs(output_file, exist_ok=True)
                     for frame in frames:

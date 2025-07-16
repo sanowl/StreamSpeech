@@ -7,7 +7,6 @@ import io
 import logging
 import os
 import pickle
-import random
 import socket
 import struct
 import subprocess
@@ -21,6 +20,7 @@ import torch
 import torch.distributed as dist
 from fairseq.dataclass.configs import DistributedTrainingConfig, FairseqConfig
 from omegaconf import open_dict
+import secrets
 
 try:
     import torch_xla.core.xla_model as xm
@@ -168,10 +168,10 @@ def _infer_single_node_init(cfg: DistributedTrainingConfig):
             if task_id is not None:
                 jobid += str(task_id)
             jobid = int(jobid)
-            rng = random.Random(jobid)
+            rng = secrets.SystemRandom().Random(jobid)
             port = rng.randint(10000, 60000)
         else:
-            port = random.randint(10000, 60000)
+            port = secrets.SystemRandom().randint(10000, 60000)
 
         cfg.distributed_port = port
     cfg.distributed_init_method = "tcp://localhost:{port}".format(

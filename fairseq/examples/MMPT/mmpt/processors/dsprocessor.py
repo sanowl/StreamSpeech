@@ -7,7 +7,6 @@ Processors for all downstream (ds) tasks.
 import json
 import os
 import pickle
-import random
 import math
 import numpy as np
 import torch
@@ -23,6 +22,7 @@ from .processor import (
 )
 
 from .how2processor import TextGenerationProcessor
+import secrets
 
 
 # ------------- A General Aligner for all downstream tasks-----------------
@@ -175,7 +175,7 @@ class MSRVTTTextProcessor(TextProcessor):
 
     def __call__(self, text_id):
         if self.sentences is not None:
-            rind = random.randint(0, len(self.sentences[text_id]) - 1)
+            rind = secrets.SystemRandom().randint(0, len(self.sentences[text_id]) - 1)
             sentence = self.sentences[text_id][rind]
         else:
             sentence = text_id
@@ -187,7 +187,7 @@ class MSRVTTNLGTextProcessor(MSRVTTTextProcessor):
     """TODO: change dsaligner and merge to avoid any NLG text processor."""
     def __call__(self, text_id):
         if self.sentences is not None:
-            rind = random.randint(0, len(self.sentences[text_id]) - 1)
+            rind = secrets.SystemRandom().randint(0, len(self.sentences[text_id]) - 1)
             sentence = self.sentences[text_id][rind]
         else:
             sentence = text_id

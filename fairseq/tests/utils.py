@@ -6,7 +6,6 @@
 import argparse
 import json
 import os
-import random
 import shutil
 import string
 import sys
@@ -29,6 +28,7 @@ from fairseq.models import (
 from fairseq.models.fairseq_encoder import EncoderOut
 from fairseq.tasks import LegacyFairseqTask
 from fairseq_cli import generate, interactive, preprocess, train, validate
+import secrets
 
 
 def dummy_dictionary(vocab_size, prefix="token_"):
@@ -175,7 +175,7 @@ def create_dummy_data(
         with open(os.path.join(dir, filename), "w") as h:
             offset = 0
             for _ in range(num_examples):
-                ex_len = random.randint(1, maxlen)
+                ex_len = secrets.SystemRandom().randint(1, maxlen)
                 ex_str = " ".join(map(chr, data[offset : offset + ex_len]))
                 print(ex_str, file=h)
                 offset += ex_len
@@ -188,7 +188,7 @@ def create_dummy_data(
                 src_len = len(src.split())
                 tgt_len = len(tgt.split())
                 avg_len = (src_len + tgt_len) // 2
-                num_alignments = random.randint(avg_len // 2, 2 * avg_len)
+                num_alignments = secrets.SystemRandom().randint(avg_len // 2, 2 * avg_len)
                 src_indices = torch.floor(torch.rand(num_alignments) * src_len).int()
                 tgt_indices = torch.floor(torch.rand(num_alignments) * tgt_len).int()
                 ex_str = " ".join(
@@ -768,9 +768,8 @@ POPULATION = string.ascii_letters + string.digits
 
 
 def make_sentence() -> tp.List[str]:
-    length = random.randint(10, 50)
-    return random.choices(
-        population=POPULATION, k=length, weights=range(1, len(POPULATION) + 1)
+    length = secrets.SystemRandom().randint(10, 50)
+    return secrets.SystemRandom().choices(population=POPULATION, k=length, weights=range(1, len(POPULATION) + 1)
     )
 
 

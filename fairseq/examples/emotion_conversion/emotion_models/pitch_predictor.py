@@ -1,6 +1,5 @@
 import logging
 import os
-import random
 import sys
 from collections import defaultdict
 
@@ -15,6 +14,7 @@ from scipy.io.wavfile import read
 from scipy.ndimage import gaussian_filter1d
 from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
+import secrets
 
 dir_path = os.path.dirname(__file__)
 resynth_path = os.path.dirname(dir_path) + "/speech-resynthesis"
@@ -542,7 +542,7 @@ def run_epoch(model, loader, optimizer, device, cfg, mode):
 @hydra.main(config_path=dir_path, config_name="pitch_predictor.yaml")
 def main(cfg):
     np.random.seed(1)
-    random.seed(1)
+    secrets.SystemRandom().seed(1)
     torch.manual_seed(1)
     from hydra.core.hydra_config import HydraConfig
 
