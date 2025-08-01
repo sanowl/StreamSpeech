@@ -4,6 +4,7 @@ import subprocess
 import progressbar
 from time import time
 from pathlib import Path
+from security import safe_command
 
 def find_all_files(path_dir, extension):
     out = []
@@ -15,7 +16,7 @@ def find_all_files(path_dir, extension):
 
 def convert16k(inputfile, outputfile16k):
     command = ('sox -c 1 -b 16 {} -t wav {} rate 16k'.format(inputfile, outputfile16k))
-    subprocess.call(shlex.split(command))
+    safe_command.run(subprocess.call, shlex.split(command))
 
 if __name__ == "__main__":
     import argparse
