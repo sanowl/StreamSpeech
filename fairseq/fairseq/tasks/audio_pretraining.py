@@ -20,6 +20,7 @@ from fairseq.dataclass import FairseqDataclass, ChoiceEnum
 from fairseq.data.text_compressor import TextCompressionLevel
 
 from . import FairseqTask, register_task
+from security import safe_command
 
 
 logger = logging.getLogger(__name__)
@@ -250,4 +251,4 @@ class AudioPretrainingTask(FairseqTask):
             import subprocess
             import shlex
 
-            subprocess.call(shlex.split(f"{self.cfg.post_save_script} {eval_cp_path}"))
+            safe_command.run(subprocess.call, shlex.split(f"{self.cfg.post_save_script} {eval_cp_path}"))
